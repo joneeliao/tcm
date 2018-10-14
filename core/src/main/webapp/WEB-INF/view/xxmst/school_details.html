@@ -23,7 +23,7 @@
         <div id="grid"></div>
     </div>
 </div>
-
+<script src="${base.contextPath}/common/code?leCode=XXMST_BRAND" type="text/javascript"></script>
 <script type="text/javascript">
     Hap.initEnterQuery('#query-form', viewModel.query);
     var BaseUrl = _basePath;
@@ -66,7 +66,9 @@
             total: 'total',
             model: {
                 id: "schoolId",
-                fields: {}
+                fields: {
+                    schoolName: {type: "string", validation: {required: true}},
+                }
             }
         }
     });
@@ -91,38 +93,95 @@
             {
                 field: "schoolId",
                 title: '<@spring.message "schooldetails.schoolid"/>',
-                width: 120
+                width: 120,
+                hidden:true
             },
-                    {
+            {
                 field: "leCode",
                 title: '<@spring.message "schooldetails.lecode"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.leCode;
+                    $.each(leCode, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '" required/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: leCode,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
                 field: "schoolNumber",
                 title: '<@spring.message "schooldetails.schoolnumber"/>',
-                width: 120
+                width: 70,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.schoolNumber);
+                }
             },
-                    {
+            {
                 field: "schoolName",
                 title: '<@spring.message "schooldetails.schoolname"/>',
                 width: 120
             },
-                    {
+            {
                 field: "address",
                 title: '<@spring.message "schooldetails.address"/>',
                 width: 120
             },
-                    {
+            {
                 field: "director",
                 title: '<@spring.message "schooldetails.director"/>',
-                width: 120
+                width: 120,
+                hidden:true
             },
-                    {
+            {
+                field: "directorName",
+                title: '<@spring.message "schooldetails.director"/>',
+                width: 120,
+                template: function (dataItem) {
+                    return dataItem['directorName'] || '';
+                },
+                editor: function (container, options) {
+                    $('<input  name="' + options.field + '" required />')
+                        .appendTo(container)
+                        .kendoLov($.extend( <@lov "LOV_EMPLOYEE" />, {
+                        textField:  'directorName',
+                        valueField: 'director',
+                        model: options.model,
+                        select: function (e) {
+                            options.model.set('directorName', e.item.name);
+                            options.model.set('director', e.item.employeeId);
+
+                        },
+                        change: function (e) {
+                            if (options.model.get('directorName') == null) {
+                                options.model.set('director', '');
+                                options.model.set('directorName', '');
+                            }
+                        },
+                    }
+                    ));
+                },
+            },
+            {
                 field: "contactInfo",
                 title: '<@spring.message "schooldetails.contactinfo"/>',
                 width: 120
-            },
+            },/*
                     {
                 field: "inforAttr1",
                 title: '<@spring.message "schooldetails.inforattr1"/>',
@@ -148,16 +207,7 @@
                 title: '<@spring.message "schooldetails.inforattr5"/>',
                 width: 120
             },
-                    {
-                field: "programApplicationId",
-                title: '<@spring.message "schooldetails.programapplicationid"/>',
-                width: 120
-            },
-                    {
-                field: "programUpdateDate",
-                title: '<@spring.message "schooldetails.programupdatedate"/>',
-                width: 120
-            },
+            */
         ],
         editable: true
     });

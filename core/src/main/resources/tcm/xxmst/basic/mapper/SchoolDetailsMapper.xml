@@ -17,7 +17,27 @@
         <result column="INFOR_ATTR5" property="inforAttr5" jdbcType="VARCHAR" />
         <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
         <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+        <result column="DIRECTOR_NAME" property="directorName" jdbcType="VARCHAR" />
     </resultMap>
 
-
+    <select id="selectSchool" resultMap="BaseResultMap" parameterType="tcm.xxmst.basic.dto.SchoolDetails">
+      SELECT
+            xsd.*,
+            (SELECT
+                    he.name
+                FROM
+                    hr_employee he
+                WHERE
+                    he.EMPLOYEE_ID = xsd.DIRECTOR) DIRECTOR_NAME
+        FROM
+            xxmst_school_details xsd
+        WHERE
+            1 = 1
+        <if test="schoolNumber != null">
+            and xsd.SCHOOL_NUMBER like CONCAT('%', #{schoolNumber},'%')
+        </if>
+        <if test="schoolName != null">
+            and xsd.SCHOOL_NAME like CONCAT('%', #{schoolName},'%')
+        </if>
+    </select>
 </mapper>
