@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="tcm.xxmst.basic.mapper.SchoolDetailsMapper">
+    <resultMap id="BaseResultMap" type="tcm.xxmst.basic.dto.SchoolDetails">
+        <result column="SCHOOL_ID" property="schoolId" jdbcType="DECIMAL" />
+        <result column="LE_CODE" property="leCode" jdbcType="VARCHAR" />
+        <result column="SCHOOL_NUMBER" property="schoolNumber" jdbcType="VARCHAR" />
+        <result column="SCHOOL_NAME" property="schoolName" jdbcType="VARCHAR" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="DIRECTOR" property="director" jdbcType="DECIMAL" />
+        <result column="CONTACT_INFO" property="contactInfo" jdbcType="VARCHAR" />
+        <result column="INFOR_ATTR1" property="inforAttr1" jdbcType="VARCHAR" />
+        <result column="INFOR_ATTR2" property="inforAttr2" jdbcType="VARCHAR" />
+        <result column="INFOR_ATTR3" property="inforAttr3" jdbcType="VARCHAR" />
+        <result column="INFOR_ATTR4" property="inforAttr4" jdbcType="VARCHAR" />
+        <result column="INFOR_ATTR5" property="inforAttr5" jdbcType="VARCHAR" />
+        <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+    </resultMap>
+
+
+</mapper>

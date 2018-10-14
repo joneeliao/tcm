@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="tcm.xxmst.basic.mapper.StudentsDetailsMapper">
+    <resultMap id="BaseResultMap" type="tcm.xxmst.basic.dto.StudentsDetails">
+        <result column="STUDENT_ID" property="studentId" jdbcType="DECIMAL" />
+        <result column="STUDENT_TYPE" property="studentType" jdbcType="VARCHAR" />
+        <result column="STUDENT_NUM" property="studentNum" jdbcType="VARCHAR" />
+        <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR" />
+        <result column="VIP_LEVEL" property="vipLevel" jdbcType="VARCHAR" />
+        <result column="BORN_DATE" property="bornDate" jdbcType="DATE" />
+        <result column="JOIN_DATE" property="joinDate" jdbcType="DATE" />
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+        <result column="PARENT_NAME" property="parentName" jdbcType="VARCHAR" />
+        <result column="PARENT_MOBILE" property="parentMobile" jdbcType="VARCHAR" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+    </resultMap>
+
+
+</mapper>

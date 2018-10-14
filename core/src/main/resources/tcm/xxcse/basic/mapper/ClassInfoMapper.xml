@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="tcm.xxcse.basic.mapper.ClassInfoMapper">
+    <resultMap id="BaseResultMap" type="tcm.xxcse.basic.dto.ClassInfo">
+        <result column="CLASS_ID" property="classId" jdbcType="DECIMAL" />
+        <result column="CLASS_TYPE" property="classType" jdbcType="VARCHAR" />
+        <result column="CLASS_NUM" property="classNum" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
+        <result column="TEACHER_ID" property="teacherId" jdbcType="DECIMAL" />
+        <result column="COURSE_CODE" property="courseCode" jdbcType="VARCHAR" />
+        <result column="START_DATE" property="startDate" jdbcType="DATE" />
+        <result column="END_DATE" property="endDate" jdbcType="DATE" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+    </resultMap>
+
+
+</mapper>
