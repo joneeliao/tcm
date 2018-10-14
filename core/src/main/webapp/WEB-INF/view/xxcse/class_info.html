@@ -2,6 +2,8 @@
 <script type="text/javascript">
     var viewModel = Hap.createGridViewModel("#grid");
 </script>
+    <script src="${base.contextPath}/common/code?classType=XXCSE_CLASS_TYPE" type="text/javascript"></script>
+    <script src="${base.contextPath}/common/code?courseCode=XXMST_COURSE" type="text/javascript"></script>
 <body>
 <div id="page-content">
     <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
@@ -11,16 +13,33 @@
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.classType"/>'
-                   data-bind="value:model.classType" class="k-textbox">
             <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.className"/>'
                    data-bind="value:model.className" class="k-textbox">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.courseCode"/>'
-                   data-bind="value:model.courseCode" class="k-textbox">
-        <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
+        <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.teacherName"/>'
+               data-bind="value:model.teacherName" class="k-textbox">
+        <input type="text" id="classType" data-role="maskedtextbox" style="width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.classType"/>'
+               data-bind="value:model.classType">
+        <input type="text" id="courseCode" data-role="maskedtextbox" style="width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.courseCode"/>'
+                   data-bind="value:model.courseCode">
+        <span class="btn btn-primary" style="width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
         <div style="clear:both"></div>
     </div>
     <script>kendo.bind($('#query-form'), viewModel);</script>
+    <script type="text/javascript">
+
+        $("#classType").kendoComboBox({
+            dataSource:classType,
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+        });
+        $("#courseCode").kendoComboBox({
+            dataSource:courseCode,
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+        });
+    </script>
     <div style="clear:both">
         <div id="grid"></div>
     </div>
@@ -68,7 +87,14 @@
             total: 'total',
             model: {
                 id: "classId",
-                fields: {}
+                fields: {
+                    startDate: {type: "date"},
+                    endDate: {type: "date"},
+                    schoolNum: {validation: {required: true}},
+                    className: {validation: {required: true}},
+                    teacherNum: {validation: {required: true}},
+                    courseCode: {validation: {required: true}},
+                }
             }
         }
     });
@@ -79,6 +105,12 @@
         scrollable: true,
         navigatable: false,
         selectable: 'multiple, rowbox',
+        toolbar: ["excel"],
+        excel: {
+            filterable: false,
+            fileName: "data.xlsx",
+            allPages: true
+        },
         dataBound: function () {
             if (parent.autoResizeIframe) {
                 parent.autoResizeIframe('${RequestParameters.functionCode!}')
@@ -93,57 +125,227 @@
             {
                 field: "classId",
                 title: '<@spring.message "classinfo.classid"/>',
-                width: 120
+                width: 120,
+                hidden:true
             },
-                    {
+            {
+                field: "schoolId",
+                title: '<@spring.message "classinfo.schoolId"/>',
+                width: 120,
+                hidden:true
+            },
+            {
+                field: "schoolNum",
+                title: '<@spring.message "classinfo.schoolNum"/>',
+                width: 120,
+                template: function (dataItem) {
+                    return dataItem['schoolNum'] || '';
+                },
+                editor: function (container, options) {
+                    $('<input  name="' + options.field + '" required />')
+                        .appendTo(container)
+                        .kendoLov($.extend( <@lov "XXMST_SCHOOL_LOV" />, {
+                        textField:  'schoolNum',
+                        valueField: 'schoolId',
+                        model: options.model,
+                        select: function (e) {
+                            options.model.set('schoolName', e.item.schoolName);
+                            options.model.set('schoolId', e.item.schoolId);
+                        },
+                        change: function (e) {
+                            if (options.model.get('schoolNum') == null) {
+                                options.model.set('schoolName', '');
+                                options.model.set('schoolId', '');
+                            }
+                        },
+                    }
+                    ));
+                },
+            },
+            {
+                field: "schoolName",
+                title: '<@spring.message "classinfo.schoolName"/>',
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.schoolName);
+                }
+            },
+            {
                 field: "classType",
                 title: '<@spring.message "classinfo.classtype"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.classType;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(classType, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: classType,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
-                field: "classNum",
-                title: '<@spring.message "classinfo.classnum"/>',
-                width: 120
-            },
-                    {
-                field: "className",
-                title: '<@spring.message "classinfo.classname"/>',
-                width: 120
-            },
-                    {
-                field: "teacherId",
-                title: '<@spring.message "classinfo.teacherid"/>',
-                width: 120
-            },
-                    {
+            {
                 field: "courseCode",
                 title: '<@spring.message "classinfo.coursecode"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.courseCode;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(courseCode, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '" required />')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: courseCode,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
+                field: "teacherId",
+                title: '<@spring.message "classinfo.teacherid"/>',
+                width: 120,
+                hidden:true
+            },
+            {
+                field: "teacherNum",
+                title: '<@spring.message "classinfo.teacherNum"/>',
+                width: 120,
+                template: function (dataItem) {
+                    return dataItem['teacherNum'] || '';
+                },
+                editor: function (container, options) {
+                    $('<input  name="' + options.field + '" required />')
+                        .appendTo(container)
+                        .kendoLov($.extend( <@lov "XXMST_TEACHER_LOV" />, {
+                        textField:  'teacherNum',
+                        valueField: 'teacherId',
+                        model: options.model,
+                        select: function (e) {
+                            options.model.set('teacherName', e.item.teacherName);
+                            options.model.set('teacherId', e.item.teacherId);
+                        },
+                        change: function (e) {
+                            if (options.model.get('teacherNum') == null) {
+                                options.model.set('teacherName', '');
+                                options.model.set('teacherId', '');
+                            }
+                        },
+                    }
+                    ));
+                },
+            },
+            {
+                field: "teacherName",
+                title: '<@spring.message "classinfo.teacherName"/>',
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.teacherName);
+                }
+            },
+            {
+                field: "classNum",
+                title: '<@spring.message "classinfo.classnum"/>',
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.classNum);
+                }
+            },
+            {
+                field: "className",
+                title: '<@spring.message "classinfo.classname"/>',
+                width: 120,
+
+            },
+            {
                 field: "startDate",
                 title: '<@spring.message "classinfo.startdate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
+                editor: function(container,options){
+                    var input=$('<input name="' + options.field + '" />');
+                    input.appendTo(container);
+
+                    var endDate = options.model.endDate;
+                    var date;
+                    if(endDate){
+                        date=endDate;
+                    }
+
+                    input.kendoDatePicker({
+                        format: "yyyy-MM-dd",
+                        value: new Date(),
+                        max:date,
+                        change:function(){
+
+                        }
+                    });
+                }
             },
-                    {
+            {
                 field: "endDate",
                 title: '<@spring.message "classinfo.enddate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
+                editor: function(container,options){
+                    var input=$('<input name="' + options.field + '" />');
+                    input.appendTo(container);
+
+                    var start = options.model.startDate;
+                    var d;
+                    if(start){
+                        d=start;
+                    }else{
+                        d=new Date()
+                    }
+                    input.kendoDatePicker({
+                        format: "yyyy-MM-dd",
+                        value: d,
+                        min:d,
+                        change:function(){
+
+                        }
+                    });
+                }
             },
-                    {
+            {
                 field: "comments",
                 title: '<@spring.message "classinfo.comments"/>',
-                width: 120
-            },
-                    {
-                field: "programApplicationId",
-                title: '<@spring.message "classinfo.programapplicationid"/>',
-                width: 120
-            },
-                    {
-                field: "programUpdateDate",
-                title: '<@spring.message "classinfo.programupdatedate"/>',
-                width: 120
+                width: 220
             },
         ],
         editable: true

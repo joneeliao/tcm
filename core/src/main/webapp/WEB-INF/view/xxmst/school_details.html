@@ -99,7 +99,7 @@
             {
                 field: "leCode",
                 title: '<@spring.message "schooldetails.lecode"/>',
-                width: 120,
+                width: 100,
                 template: function (dataItem) {
                     var v = dataItem.leCode;
                     $.each(leCode, function (i, n) {
@@ -124,7 +124,7 @@
             {
                 field: "schoolNumber",
                 title: '<@spring.message "schooldetails.schoolnumber"/>',
-                width: 70,
+                width: 50,
                 attributes: {
                     readonly: true
                 },
@@ -140,7 +140,7 @@
             {
                 field: "address",
                 title: '<@spring.message "schooldetails.address"/>',
-                width: 120
+                width: 220
             },
             {
                 field: "director",
@@ -151,7 +151,7 @@
             {
                 field: "directorName",
                 title: '<@spring.message "schooldetails.director"/>',
-                width: 120,
+                width: 80,
                 template: function (dataItem) {
                     return dataItem['directorName'] || '';
                 },

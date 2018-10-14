@@ -11,18 +11,10 @@
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TeachersDetails.techType"/>'
-                   data-bind="value:model.techType" class="k-textbox">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TeachersDetails.educationType"/>'
-                   data-bind="value:model.educationType" class="k-textbox">
             <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TeachersDetails.teacherName"/>'
                    data-bind="value:model.teacherName" class="k-textbox">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TeachersDetails.certificateType"/>'
-                   data-bind="value:model.certificateType" class="k-textbox">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TeachersDetails.bankName"/>'
-                   data-bind="value:model.bankName" class="k-textbox">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TeachersDetails.bankBranchName"/>'
-                   data-bind="value:model.bankBranchName" class="k-textbox">
+            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "TeachersDetails.teacherNum"/>'
+                   data-bind="value:model.teacherNum" class="k-textbox">
         <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
         <div style="clear:both"></div>
     </div>
@@ -31,7 +23,10 @@
         <div id="grid"></div>
     </div>
 </div>
-
+<script src="${base.contextPath}/common/code?techType=XXMST_TEACHER_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?certificateType=HR.CERTIFICATE_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?educationType=XXMST_EDUCATION_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?gender=HR.EMPLOYEE_GENDER" type="text/javascript"></script>
 <script type="text/javascript">
     Hap.initEnterQuery('#query-form', viewModel.query);
     var BaseUrl = _basePath;
@@ -74,7 +69,17 @@
             total: 'total',
             model: {
                 id: "teacherId",
-                fields: {}
+                fields: {
+                    teacherName: {type: "string", validation: {required: true}},
+                    gradurationDate: {type: "date"},
+                    bornDate: {type: "date",},
+                    joinDate: {type: "date",},
+                    effectiveStartDate: {type: "date"},
+                    effectiveEndDate: {type: "date"},
+                    mobile: {validation: {required: true}},
+                    certificateType: {validation: {required: true}},
+                    certificateId: {validation: {required: true}},
+                }
             }
         }
     });
@@ -85,6 +90,12 @@
         scrollable: true,
         navigatable: false,
         selectable: 'multiple, rowbox',
+        toolbar: ["excel"],
+        excel: {
+            filterable: false,
+            fileName: "data.xlsx",
+            allPages: true
+        },
         dataBound: function () {
             if (parent.autoResizeIframe) {
                 parent.autoResizeIframe('${RequestParameters.functionCode!}')
@@ -99,111 +110,202 @@
             {
                 field: "teacherId",
                 title: '<@spring.message "teachersdetails.teacherid"/>',
-                width: 120
+                width: 120,
+                hidden:true
             },
-                    {
+            {
                 field: "techType",
                 title: '<@spring.message "teachersdetails.techtype"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.techType;
+                    $.each(techType, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '" required/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: techType,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
                 field: "educationType",
                 title: '<@spring.message "teachersdetails.educationtype"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.educationType;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(educationType, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: educationType,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
                 field: "educationSchool",
                 title: '<@spring.message "teachersdetails.educationschool"/>',
                 width: 120
             },
-                    {
+            {
                 field: "gradurationDate",
                 title: '<@spring.message "teachersdetails.gradurationdate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
             },
-                    {
+            {
                 field: "teacherNum",
                 title: '<@spring.message "teachersdetails.teachernum"/>',
-                width: 120
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.teacherNum);
+                }
             },
-                    {
+            {
                 field: "teacherName",
                 title: '<@spring.message "teachersdetails.teachername"/>',
                 width: 120
             },
-                    {
+            {
                 field: "bornDate",
                 title: '<@spring.message "teachersdetails.borndate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
             },
-                    {
+            {
                 field: "email",
                 title: '<@spring.message "teachersdetails.email"/>',
                 width: 120
             },
-                    {
+            {
                 field: "mobile",
                 title: '<@spring.message "teachersdetails.mobile"/>',
                 width: 120
             },
-                    {
+            {
                 field: "joinDate",
                 title: '<@spring.message "teachersdetails.joindate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
             },
-                    {
+            {
                 field: "gender",
                 title: '<@spring.message "teachersdetails.gender"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.gender;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(gender, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: gender,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
                 field: "certificateType",
                 title: '<@spring.message "teachersdetails.certificatetype"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.certificateType;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(certificateType, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '" required />')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: certificateType,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
                 field: "certificateId",
                 title: '<@spring.message "teachersdetails.certificateid"/>',
                 width: 120
             },
-                    {
+            {
                 field: "effectiveStartDate",
                 title: '<@spring.message "teachersdetails.effectivestartdate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
             },
-                    {
+            {
                 field: "effectiveEndDate",
                 title: '<@spring.message "teachersdetails.effectiveenddate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
             },
-                    {
+            {
                 field: "bankAccount",
                 title: '<@spring.message "teachersdetails.bankaccount"/>',
                 width: 120
             },
-                    {
+            {
                 field: "bankName",
                 title: '<@spring.message "teachersdetails.bankname"/>',
                 width: 120
             },
-                    {
+            {
                 field: "bankBranchName",
                 title: '<@spring.message "teachersdetails.bankbranchname"/>',
                 width: 120
             },
-                    {
+            {
                 field: "comments",
                 title: '<@spring.message "teachersdetails.comments"/>',
-                width: 120
-            },
-                    {
-                field: "programApplicationId",
-                title: '<@spring.message "teachersdetails.programapplicationid"/>',
-                width: 120
-            },
-                    {
-                field: "programUpdateDate",
-                title: '<@spring.message "teachersdetails.programupdatedate"/>',
                 width: 120
             },
         ],

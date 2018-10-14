@@ -52,11 +52,10 @@ public class SchoolDetailsController extends BaseController {
         IRequest requestCtx = createRequestContext(request);
 
         //Generate Code
-        List<SchoolDetails> tempList = new ArrayList<>();
         for (int i = 0; i < dto.size(); i++) {
             SchoolDetails school = dto.get(i);
             if (school.getSchoolId() == null || "".equals(school.getSchoolNumber())) {
-                school.setSchoolNumber(codeRuleProcessService.getRuleCode("XXMST_SCHOOL_NUM"));
+                school.setSchoolNumber("1" + codeRuleProcessService.getRuleCode("XXMST_SCHOOL_NUM"));
                 dto.set(i, school);
             }
         }

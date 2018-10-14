@@ -4,6 +4,7 @@
 <mapper namespace="tcm.xxcse.basic.mapper.ClassInfoMapper">
     <resultMap id="BaseResultMap" type="tcm.xxcse.basic.dto.ClassInfo">
         <result column="CLASS_ID" property="classId" jdbcType="DECIMAL" />
+        <result column="SCHOOL_ID" property="schoolId" jdbcType="DECIMAL" />
         <result column="CLASS_TYPE" property="classType" jdbcType="VARCHAR" />
         <result column="CLASS_NUM" property="classNum" jdbcType="VARCHAR" />
         <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
@@ -12,9 +13,45 @@
         <result column="START_DATE" property="startDate" jdbcType="DATE" />
         <result column="END_DATE" property="endDate" jdbcType="DATE" />
         <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="TEACHER_NAME" property="teacherName" jdbcType="VARCHAR" />
+        <result column="SCHOOL_NAME" property="schoolName" jdbcType="VARCHAR" />
+        <result column="TEACHER_NUM" property="teacherNum" jdbcType="VARCHAR" />
+        <result column="SCHOOL_NUMBER" property="schoolNum" jdbcType="VARCHAR" />
         <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
         <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
     </resultMap>
 
-
+    <select id="queryData" resultMap="BaseResultMap" parameterType="tcm.xxcse.basic.dto.ClassInfo">
+        SELECT
+            xci.*,
+            xtd.TEACHER_NAME,
+            xtd.TEACHER_NUM,
+            xsd.SCHOOL_NAME,
+            xsd.SCHOOL_NUMBER
+        FROM
+            xxcse_class_info xci,
+            xxmst_teachers_details xtd,
+            xxmst_school_details xsd
+        WHERE
+            xtd.TEACHER_ID = xci.TEACHER_ID
+        AND xsd.SCHOOL_ID = xci.SCHOOL_ID
+        <if test="classNum != null">
+            and xci.CLASS_NUM like CONCAT('%', #{classNum},'%')
+        </if>
+        <if test="courseCode != null">
+            and xci.COURSE_CODE like CONCAT('%', #{courseCode},'%')
+        </if>
+        <if test="className != null">
+            and xci.CLASS_NAME like CONCAT('%', #{className},'%')
+        </if>
+        <if test="teacherId != null">
+            and xci.TEACHER_ID  = #{teacherId}
+        </if>
+        <if test="classType != null">
+            and xci.CLASS_TYPE  = #{classType}
+        </if>
+        <if test="teacherName != null">
+            and xtd.TEACHER_NAME like CONCAT('%', #{teacherName},'%')
+        </if>
+    </select>
 </mapper>

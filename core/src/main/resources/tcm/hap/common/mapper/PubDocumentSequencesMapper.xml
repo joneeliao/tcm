@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hap.common.mapper.PubDocumentSequencesMapper">
+    <resultMap id="BaseResultMap" type="hap.common.dto.PubDocumentSequences">
+        <result column="DOCUMENT_SEQUENCE_ID" property="documentSequenceId" jdbcType="DECIMAL"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="APPLICATION_ID" property="applicationId" jdbcType="DECIMAL"/>
+        <result column="APPL_MODULE" property="applModule" jdbcType="VARCHAR"/>
+        <result column="TYPE" property="type" jdbcType="VARCHAR"/>
+        <result column="CYC_TYPE" property="cycType" jdbcType="VARCHAR"/>
+        <result column="LENGTH" property="length" jdbcType="DECIMAL"/>
+        <result column="INCL_CYC_PREFIX" property="inclCycPrefix" jdbcType="VARCHAR"/>
+        <result column="PREFIX_CHAR" property="prefixChar" jdbcType="VARCHAR"/>
+        <result column="CONCAT_CHAR" property="concatChar" jdbcType="VARCHAR"/>
+        <result column="ENABLED_FLAG" property="enabledFlag" jdbcType="VARCHAR"/>
+        <result column="AUDIT_TABLE_NAME" property="auditTableName" jdbcType="VARCHAR"/>
+        <result column="NEXT_SEQ_VALUE" property="nextSeqValue" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="lockDocSeqNumber" resultMap="BaseResultMap" parameterType="hap.common.dto.PubDocumentSequences">
+        SELECT pds.* FROM xxfnd_pub_document_sequences pds
+        where pds.NAME = #{name,jdbcType=VARCHAR}
+        AND pds.CYC_TYPE = #{cycType,jdbcType=VARCHAR}
+        AND pds.PREFIX_CHAR = #{prefixChar,jdbcType=VARCHAR}
+        AND pds.LENGTH = #{length,jdbcType=DECIMAL}
+        for update
+    </select>
+
+    <update id="updateDocSeq" parameterType="hap.common.dto.PubDocumentSequences">
+        UPDATE xxfnd_pub_document_sequences psd
+        <set>
+            psd.LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+            psd.OBJECT_VERSION_NUMBER = psd.OBJECT_VERSION_NUMBER + 1,
+            <if test="nextSeqValue!= null">
+                psd.NEXT_SEQ_VALUE = #{nextSeqValue,jdbcType=DECIMAL},
+            </if>
+            <if test="inclCycPrefix!=null">
+                psd.INCL_CYC_PREFIX = #{inclCycPrefix,jdbcType=VARCHAR}
+            </if>
+        </set>
+        WHERE
+        psd.NAME=#{name,jdbcType=VARCHAR}
+        AND psd.CYC_TYPE = #{cycType,jdbcType=VARCHAR}
+        AND psd.PREFIX_CHAR = #{prefixChar,jdbcType=VARCHAR}
+        AND psd.LENGTH = #{length,jdbcType=DECIMAL}
+    </update>
+
+    <insert id="insertDosSeq" parameterType="hap.common.dto.PubDocumentSequences">
+        insert into xxfnd_pub_document_sequences
+        (NAME,CYC_TYPE,LENGTH,INCL_CYC_PREFIX,
+        PREFIX_CHAR,CONCAT_CHAR,ENABLED_FLAG,
+        TYPE,NEXT_SEQ_VALUE,OBJECT_VERSION_NUMBER,
+        CREATION_DATE,
+        CREATED_BY,
+        LAST_UPDATED_BY,
+        LAST_UPDATE_DATE,
+        LAST_UPDATE_LOGIN,
+        PROGRAM_APPLICATION_ID,
+        PROGRAM_UPDATE_DATE,
+        REQUEST_ID,
+        PROGRAM_ID)
+        values
+        (#{name,jdbcType=VARCHAR},#{cycType,jdbcType=VARCHAR},#{length,jdbcType=DECIMAL},#{inclCycPrefix,jdbcType=VARCHAR},
+        #{prefixChar,jdbcType=VARCHAR},#{concatChar,jdbcType=VARCHAR},#{enabledFlag,jdbcType=VARCHAR},
+        #{type,jdbcType=VARCHAR},1,
+        1,
+         CURRENT_TIMESTAMP,
+         -1,
+         -1,
+         CURRENT_TIMESTAMP,
+         #{lastUpdateLogin,jdbcType=DECIMAL},
+         1,
+         CURRENT_TIMESTAMP,
+         #{requestId,jdbcType=DECIMAL},
+         #{programId,jdbcType=DECIMAL});
+    </insert>
+
+    <select id="getSeqCurrVal" resultType="java.lang.Long" parameterType="java.lang.String">
+        SELECT xxct_seq_currval(#{sequenceName})
+    </select>
+
+    <select id="getSeqNextVal" resultType="java.lang.Long" parameterType="java.lang.String">
+        SELECT xxct_seq_nextval(#{sequenceName})
+    </select>
+</mapper>

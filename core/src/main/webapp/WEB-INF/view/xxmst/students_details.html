@@ -11,8 +11,6 @@
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "StudentsDetails.studentType"/>'
-                   data-bind="value:model.studentType" class="k-textbox">
             <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "StudentsDetails.studentName"/>'
                    data-bind="value:model.studentName" class="k-textbox">
             <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "StudentsDetails.parentName"/>'
@@ -25,7 +23,8 @@
         <div id="grid"></div>
     </div>
 </div>
-
+<script src="${base.contextPath}/common/code?studentType=XXMST_STUDENT_TYPE" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?vipLevel=XXMST_VIP_LEVEL" type="text/javascript"></script>
 <script type="text/javascript">
     Hap.initEnterQuery('#query-form', viewModel.query);
     var BaseUrl = _basePath;
@@ -68,7 +67,14 @@
             total: 'total',
             model: {
                 id: "studentId",
-                fields: {}
+                fields: {
+                    studentName:{type: "string", validation: {required: true}},
+                    joinDate:{type: "date",},
+                    bornDate:{type: "date",},
+                    address: {validation: {required: true}},
+                    mobile: {validation: {required: true}},
+                    parentName: {validation: {required: true}},
+                }
             }
         }
     });
@@ -79,6 +85,12 @@
         scrollable: true,
         navigatable: false,
         selectable: 'multiple, rowbox',
+        toolbar: ["excel"],
+        excel: {
+            filterable: false,
+            fileName: "data.xlsx",
+            allPages: true
+        },
         dataBound: function () {
             if (parent.autoResizeIframe) {
                 parent.autoResizeIframe('${RequestParameters.functionCode!}')
@@ -93,72 +105,117 @@
             {
                 field: "studentId",
                 title: '<@spring.message "studentsdetails.studentid"/>',
-                width: 120
+                width: 120,
+                hidden:true
             },
-                    {
+            {
                 field: "studentType",
                 title: '<@spring.message "studentsdetails.studenttype"/>',
-                width: 120
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.studentType;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(studentType, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '" required/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: studentType,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
                 field: "studentNum",
                 title: '<@spring.message "studentsdetails.studentnum"/>',
-                width: 120
+                width: 80,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.studentNum);
+                }
             },
-                    {
+            {
                 field: "studentName",
                 title: '<@spring.message "studentsdetails.studentname"/>',
                 width: 120
             },
-                    {
+            {
                 field: "vipLevel",
                 title: '<@spring.message "studentsdetails.viplevel"/>',
-                width: 120
+                width: 100,
+                template: function (dataItem) {
+                    var v = dataItem.vipLevel;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(vipLevel, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '" />')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: vipLevel,
+                            valuePrimitive: true,
+                        });
+                }
             },
-                    {
+            {
                 field: "bornDate",
                 title: '<@spring.message "studentsdetails.borndate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
             },
-                    {
+            {
                 field: "joinDate",
                 title: '<@spring.message "studentsdetails.joindate"/>',
-                width: 120
+                width: 120,
+                format: "{0: yyyy-MM-dd}",
             },
-                    {
+            {
                 field: "address",
                 title: '<@spring.message "studentsdetails.address"/>',
-                width: 120
+                width: 220
             },
-                    {
+            {
                 field: "mobile",
                 title: '<@spring.message "studentsdetails.mobile"/>',
                 width: 120
             },
-                    {
+            {
                 field: "parentName",
                 title: '<@spring.message "studentsdetails.parentname"/>',
-                width: 120
+                width: 150
             },
-                    {
+            {
                 field: "parentMobile",
                 title: '<@spring.message "studentsdetails.parentmobile"/>',
-                width: 120
+                width: 150
             },
-                    {
+            {
                 field: "comments",
                 title: '<@spring.message "studentsdetails.comments"/>',
-                width: 120
-            },
-                    {
-                field: "programApplicationId",
-                title: '<@spring.message "studentsdetails.programapplicationid"/>',
-                width: 120
-            },
-                    {
-                field: "programUpdateDate",
-                title: '<@spring.message "studentsdetails.programupdatedate"/>',
-                width: 120
+                width: 220
             },
         ],
         editable: true

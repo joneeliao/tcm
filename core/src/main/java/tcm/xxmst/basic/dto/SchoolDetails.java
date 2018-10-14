@@ -7,6 +7,7 @@ package tcm.xxmst.basic.dto;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.hand.hap.mybatis.annotation.Condition;
 import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import org.hibernate.validator.constraints.Length;
 
@@ -47,9 +48,15 @@ public class SchoolDetails extends BaseDTO {
     @Length(max = 30)
     private String leCode; //品牌
 
+    @Condition(
+            operator = "LIKE"
+    )
     @Length(max = 30)
     private String schoolNumber; //学校编码
 
+    @Condition(
+            operator = "LIKE"
+    )
     @Length(max = 250)
     private String schoolName; //学校名称
 
