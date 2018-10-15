@@ -39,5 +39,6 @@
         <if test="schoolName != null">
             and xsd.SCHOOL_NAME like CONCAT('%', #{schoolName},'%')
         </if>
+        order by xsd.SCHOOL_ID desc
     </select>
 </mapper>

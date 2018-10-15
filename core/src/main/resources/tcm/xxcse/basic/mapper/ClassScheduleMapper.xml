@@ -5,14 +5,53 @@
     <resultMap id="BaseResultMap" type="tcm.xxcse.basic.dto.ClassSchedule">
         <result column="SCHEDULE_ID" property="scheduleId" jdbcType="DECIMAL" />
         <result column="CLASS_ID" property="classId" jdbcType="DECIMAL" />
-        <result column="START_DATETIME" property="startDatetime" jdbcType="DATE" />
-        <result column="END_DATETIME" property="endDatetime" jdbcType="DATE" />
+        <result column="START_DATETIME" property="startDatetime" jdbcType="TIMESTAMP" />
+        <result column="END_DATETIME" property="endDatetime" jdbcType="TIMESTAMP" />
         <result column="CLASSROOM" property="classroom" jdbcType="VARCHAR" />
         <result column="TIME_LONG" property="timeLong" jdbcType="DECIMAL" />
         <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
         <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
         <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+        <result column="TEACHER_ID" property="teacherId" jdbcType="DECIMAL" />
+        <result column="TEACHER_NAME" property="teacherName" jdbcType="VARCHAR" />
+        <result column="TEACHER_NUM" property="teacherNum" jdbcType="VARCHAR" />
+        <result column="CLASS_TYPE" property="classType" jdbcType="VARCHAR" />
+        <result column="CLASS_NUM" property="classNum" jdbcType="VARCHAR" />
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
+        <result column="COURSE_CODE" property="courseCode" jdbcType="VARCHAR" />
     </resultMap>
 
-
+    <select id="queryData" resultMap="BaseResultMap" parameterType="tcm.xxcse.basic.dto.ClassSchedule">
+        SELECT
+            xcs.*,
+            xtd.TEACHER_NAME,
+            xtd.TEACHER_NUM,
+            xci.CLASS_NUM,
+            xci.CLASS_NAME,
+            xci.CLASS_TYPE,
+            xci.COURSE_CODE
+        FROM
+            xxcse_class_info xci,
+            xxmst_teachers_details xtd,
+            xxcse_class_schedule xcs
+        WHERE
+            xtd.TEACHER_ID = xci.TEACHER_ID
+        and xcs.CLASS_ID = xci.CLASS_ID
+        <if test="teacherName != null">
+            and xtd.TEACHER_NAME like CONCAT('%', #{teacherName},'%')
+        </if>
+        <if test="className != null">
+            and xci.CLASS_NAME like CONCAT('%', #{className},'%')
+        </if>
+        <if test="courseCode != null">
+            and xci.COURSE_CODE = #{courseCode}
+        </if>
+        <if test="classId != null">
+            and xci.CLASS_ID = #{classId}
+        </if>
+        <if test="classNum != null">
+            and xci.CLASS_NUM = #{classNum}
+        </if>
+        order by xci.CLASS_NUM desc,xcs.START_DATETIME asc
+    </select>
 </mapper>

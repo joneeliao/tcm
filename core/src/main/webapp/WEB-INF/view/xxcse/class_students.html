@@ -90,10 +90,10 @@
             model: {
                 id: "classStudentId",
                 fields: {
-                    startDate: {type: "date"},
-                    endDate: {type: "date"},
-                    //schoolNum: {validation: {required: true}},
-                    //className: {validation: {required: true}},
+                    startDate: {type: "date",defaultValue: ""},
+                    endDate: {type: "date",defaultValue: ""},
+                    classNum: {validation: {required: true}},
+                    studentNum: {validation: {required: true}},
                     //teacherNum: {validation: {required: true}},
                     //courseCode: {validation: {required: true}},
                 }

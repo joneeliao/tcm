@@ -2,6 +2,8 @@
 <script type="text/javascript">
     var viewModel = Hap.createGridViewModel("#grid");
 </script>
+    <script src="${base.contextPath}/common/code?classType=XXCSE_CLASS_TYPE" type="text/javascript"></script>
+    <script src="${base.contextPath}/common/code?courseCode=XXMST_COURSE" type="text/javascript"></script>
 <body>
 <div id="page-content">
     <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
@@ -11,10 +13,35 @@
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-        <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
+        <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.className"/>'
+               data-bind="value:model.className" class="k-textbox">
+        <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.teacherName"/>'
+               data-bind="value:model.teacherName" class="k-textbox">
+        <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.studentName"/>'
+               data-bind="value:model.studentName" class="k-textbox">
+        <input type="text" id="classType" style="width:150px;" placeholder='<@spring.message "ClassInfo.classType"/>'
+               data-bind="value:model.classType">
+        <input type="text" id="courseCode" style="width:150px;" placeholder='<@spring.message "ClassInfo.courseCode"/>'
+               data-bind="value:model.courseCode">
+        <span class="btn btn-primary" style="width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
         <div style="clear:both"></div>
     </div>
     <script>kendo.bind($('#query-form'), viewModel);</script>
+    <script type="text/javascript">
+
+        $("#classType").kendoComboBox({
+            dataSource:classType,
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+        });
+        $("#courseCode").kendoComboBox({
+            dataSource:courseCode,
+            valuePrimitive: true,
+            dataTextField: "meaning",
+            dataValueField: "value",
+        });
+    </script>
     <div style="clear:both">
         <div id="grid"></div>
     </div>
@@ -62,7 +89,12 @@
             total: 'total',
             model: {
                 id: "scheduleId",
-                fields: {}
+                fields: {
+                    startDatetime: {type: "date",validation: {required: true},defaultValue: ""},
+                    endDatetime: {type: "date",validation: {required: true},defaultValue: ""},
+                    classNum: {validation: {required: true}},
+                    timeLong: {type: "number",validation: {required: true},defaultValue: ""},
+                }
             }
         }
     });
@@ -73,6 +105,12 @@
         scrollable: true,
         navigatable: false,
         selectable: 'multiple, rowbox',
+        toolbar: ["excel"],
+        excel: {
+            filterable: false,
+            fileName: "data.xlsx",
+            allPages: true
+        },
         dataBound: function () {
             if (parent.autoResizeIframe) {
                 parent.autoResizeIframe('${RequestParameters.functionCode!}')
@@ -87,48 +125,216 @@
             {
                 field: "scheduleId",
                 title: '<@spring.message "classschedule.scheduleid"/>',
-                width: 120
+                width: 120,
+                hidden:true
             },
-                    {
+            {
                 field: "classId",
                 title: '<@spring.message "classschedule.classid"/>',
-                width: 120
+                width: 120,
+                hidden: true
             },
-                    {
+            {
+                field: "classNum",
+                title: '<@spring.message "classstudents.classNum"/>',
+                width: 120,
+                template: function (dataItem) {
+                    return dataItem['classNum'] || '';
+                },
+                editor: function (container, options) {
+                    $('<input  name="' + options.field + '" required />')
+                        .appendTo(container)
+                        .kendoLov($.extend(<@lov "XXCSE_CLASS_INFO" />, {
+                        textField:  'classNum',
+                        valueField: 'classId',
+                        model: options.model,
+                        select: function (e) {
+                            options.model.set('className', e.item.className);
+                            options.model.set('classId', e.item.classId);
+                            options.model.set('teacherName', e.item.teacherName);
+                            options.model.set('classType', e.item.classType);
+                            options.model.set('courseCode', e.item.courseCode);
+                        },
+                        change: function (e) {
+                            if (options.model.get('classNum') == null) {
+                                options.model.set('classId', '');
+                                options.model.set('className', '');
+                                options.model.set('teacherName', '');
+                                options.model.set('classType', '');
+                                options.model.set('courseCode', '');
+                            }
+                        },
+                    }
+                    ));
+                },
+            },
+            {
+                field: "className",
+                title: '<@spring.message "classstudents.className"/>',
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.className);
+                }
+            },
+            {
                 field: "startDatetime",
                 title: '<@spring.message "classschedule.startdatetime"/>',
-                width: 120
+                width: 200,
+                format:"{0:yyyy-MM-dd hh:mm:ss}",
+                editor: function(container,options){
+                    var input=$('<input name="' + options.field + '" required/>');
+                    input.appendTo(container);
+
+                    var endDate = options.model.endDatetime;
+                    var date;
+                    if(endDate){
+                        date=endDate;
+                    }
+
+                    input.kendoDateTimePicker({
+                        format: "yyyy-MM-dd hh:mm:ss",
+                        max:date,
+                        change:function(){
+
+                        }
+                    });
+                }
             },
-                    {
+            {
                 field: "endDatetime",
                 title: '<@spring.message "classschedule.enddatetime"/>',
-                width: 120
+                width: 200,
+                format:"{0:yyyy-MM-dd hh:mm:ss}",
+                editor: function(container,options){
+                    var input=$('<input name="' + options.field + '" required />');
+                    input.appendTo(container);
+
+                    var start = options.model.startDatetime;
+                    var d;
+                    if(start){
+                        d=start;
+                    }else{
+                        d=(new Date())
+                    }
+                    input.kendoDateTimePicker({
+                        format: "yyyy-MM-dd hh:mm:ss",
+                        min:d,
+                        change:function(){
+
+                        }
+                    });
+                }
             },
-                    {
+            {
+                field: "timeLong",
+                title: '<@spring.message "classschedule.timelong"/>',
+                width: 120,
+                editor: function(container, options){
+                    $('<input name="' + options.field + '" REQUIRED type="number"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            decimals: 0,
+                            min:0
+                        });
+                },
+                attributes: {
+                    style: "text-align:right"
+                },
+            },
+            {
                 field: "classroom",
                 title: '<@spring.message "classschedule.classroom"/>',
                 width: 120
             },
-                    {
-                field: "timeLong",
-                title: '<@spring.message "classschedule.timelong"/>',
-                width: 120
+            {
+                field: "teacherName",
+                title: '<@spring.message "classstudents.teacherName"/>',
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    container.html(options.model.teacherName);
+                }
             },
-                    {
+            {
+                field: "classType",
+                title: '<@spring.message "classstudents.classType"/>',
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+
+                    var v = options.model.classType;
+                    if(v == "" || v == 	undefined){
+                        container.html(v);
+                    }
+                    $.each(classType, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            container.html(v);
+                        }
+                    })
+
+                },
+                template: function (dataItem) {
+                    var v = dataItem.classType;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(classType, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+            },
+            {
+                field: "courseCode",
+                title: '<@spring.message "classstudents.courseCode"/>',
+                width: 120,
+                attributes: {
+                    readonly: true
+                },
+                editor: function (container, options) {
+                    var v = options.model.courseCode;
+                    if(v == "" || v == 	undefined){
+                        container.html(v);
+                    }
+                    $.each(courseCode, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            container.html(v);
+                        }
+                    })
+                },
+                template: function (dataItem) {
+                    var v = dataItem.courseCode;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(courseCode, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+
+            },
+            {
                 field: "comments",
                 title: '<@spring.message "classschedule.comments"/>',
-                width: 120
+                width: 180
             },
-                    {
-                field: "programApplicationId",
-                title: '<@spring.message "classschedule.programapplicationid"/>',
-                width: 120
-            },
-                    {
-                field: "programUpdateDate",
-                title: '<@spring.message "classschedule.programupdatedate"/>',
-                width: 120
-            },
+
         ],
         editable: true
     });

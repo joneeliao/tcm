@@ -6,13 +6,12 @@
         <result column="CLASS_STUDENT_ID" property="classStudentId" jdbcType="DECIMAL" />
         <result column="STUDENT_ID" property="studentId" jdbcType="DECIMAL" />
         <result column="CLASS_ID" property="classId" jdbcType="DECIMAL" />
-        <result column="TEACHER_ID" property="teacherId" jdbcType="DECIMAL" />
         <result column="START_DATE" property="startDate" jdbcType="DATE" />
         <result column="END_DATE" property="endDate" jdbcType="DATE" />
         <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
         <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
         <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
-
+        <result column="TEACHER_ID" property="teacherId" jdbcType="DECIMAL" />
         <result column="TEACHER_NAME" property="teacherName" jdbcType="VARCHAR" />
         <result column="TEACHER_NUM" property="teacherNum" jdbcType="VARCHAR" />
         <result column="CLASS_TYPE" property="classType" jdbcType="VARCHAR" />
@@ -61,8 +60,9 @@
         <if test="classId != null">
             and xci.CLASS_ID = #{classId}
         </if>
-        <if test="classId != null">
+        <if test="classNum != null">
             and xci.CLASS_NUM = #{classNum}
         </if>
+        order by xci.CLASS_NUM desc, xsd.STUDENT_NUM desc
     </select>
 </mapper>
