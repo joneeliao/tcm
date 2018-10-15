@@ -25,6 +25,7 @@
 </div>
 <script src="${base.contextPath}/common/code?studentType=XXMST_STUDENT_TYPE" type="text/javascript"></script>
 <script src="${base.contextPath}/common/code?vipLevel=XXMST_VIP_LEVEL" type="text/javascript"></script>
+<script src="${base.contextPath}/common/code?gender=HR.EMPLOYEE_GENDER" type="text/javascript"></script>
 <script type="text/javascript">
     Hap.initEnterQuery('#query-form', viewModel.query);
     var BaseUrl = _basePath;
@@ -151,6 +152,34 @@
                 field: "studentName",
                 title: '<@spring.message "studentsdetails.studentname"/>',
                 width: 120
+            },
+            {
+                field: "gender",
+                title: '<@spring.message "teachersdetails.gender"/>',
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.gender;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(gender, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '" required/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: gender,
+                            valuePrimitive: true,
+                        });
+                }
             },
             {
                 field: "vipLevel",

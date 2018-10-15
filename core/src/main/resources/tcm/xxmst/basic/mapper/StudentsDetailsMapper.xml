@@ -8,6 +8,7 @@
         <result column="STUDENT_NUM" property="studentNum" jdbcType="VARCHAR" />
         <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR" />
         <result column="VIP_LEVEL" property="vipLevel" jdbcType="VARCHAR" />
+        <result column="GENDER" property="gender" jdbcType="VARCHAR" />
         <result column="BORN_DATE" property="bornDate" jdbcType="DATE" />
         <result column="JOIN_DATE" property="joinDate" jdbcType="DATE" />
         <result column="ADDRESS" property="address" jdbcType="VARCHAR" />

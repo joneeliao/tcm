@@ -13,13 +13,13 @@
     </div>
     <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
     <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.className"/>'
+        <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.className"/>'
                    data-bind="value:model.className" class="k-textbox">
         <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.teacherName"/>'
                data-bind="value:model.teacherName" class="k-textbox">
-        <input type="text" id="classType" data-role="maskedtextbox" style="width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.classType"/>'
+        <input type="text" id="classType" style="width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.classType"/>'
                data-bind="value:model.classType">
-        <input type="text" id="courseCode" data-role="maskedtextbox" style="width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.courseCode"/>'
+        <input type="text" id="courseCode" style="width:150px;margin-right:5px;" placeholder='<@spring.message "ClassInfo.courseCode"/>'
                    data-bind="value:model.courseCode">
         <span class="btn btn-primary" style="width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
         <div style="clear:both"></div>

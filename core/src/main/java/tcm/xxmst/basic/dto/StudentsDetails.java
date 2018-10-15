@@ -84,6 +84,8 @@ public class StudentsDetails extends BaseDTO {
     @Length(max = 4000)
     private String comments; //备注
 
+    private String gender;
+
     private Long programApplicationId;
 
     private Date programUpdateDate;
@@ -201,4 +203,11 @@ public class StudentsDetails extends BaseDTO {
         return programUpdateDate;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 }
