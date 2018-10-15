@@ -6,8 +6,8 @@
         <result column="ATTEND_ID" property="attendId" jdbcType="DECIMAL" />
         <result column="CLASS_STUDENT_ID" property="classStudentId" jdbcType="DECIMAL" />
         <result column="SCHEDULE_ID" property="scheduleId" jdbcType="DECIMAL" />
-        <result column="START_DATETIME" property="startDatetime" jdbcType="DATE" />
-        <result column="END_DATETIME" property="endDatetime" jdbcType="DATE" />
+        <result column="START_DATETIME" property="startDatetime" jdbcType="TIMESTAMP" />
+        <result column="END_DATETIME" property="endDatetime" jdbcType="TIMESTAMP" />
         <result column="SCORE" property="score" jdbcType="DECIMAL" />
         <result column="PERFOR_COMMENT" property="perforComment" jdbcType="VARCHAR" />
         <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />

@@ -82,10 +82,11 @@
             model: {
                 id: "attendId",
                 fields: {
-                    startDatetime: {type: "date",editable: false,defaultValue: ""},
-                    endDatetime: {type: "date",editable: false,defaultValue: ""},
+                    startDatetime: {type: "date",defaultValue: ""},
+                    endDatetime: {type: "date",defaultValue: ""},
                     className:{validation: {required: true},},
-                    studentName:{validation: {required: true},}
+                    studentName:{validation: {required: true},},
+                    score: {type: "number",defaultValue: ""},
                 }
             }
         }
@@ -141,7 +142,7 @@
             {
                 field: "className",
                 title: '<@spring.message "attendclassrecord.className"/>',
-                width: 120,
+                width: 220,
                 template: function (dataItem) {
                     return dataItem['className'] || '';
                 },
@@ -164,6 +165,8 @@
                             options.model.set('comments', e.item.comments);
                         },
                         change: function (e) {
+                            options.model.set('studentName', '');
+                            options.model.set('classStudentId', '');
                             if (options.model.get('className') == null) {
                                 ptions.model.set('scheduleId', '');
                                 options.model.set('classId', '');
@@ -202,6 +205,9 @@
                                 options.model.set('classStudentId', '');
                             }
                         },
+                        query: function (e) {
+                            e.param["classId"] = options.model.get('classId');
+                        }
                     }
                     ));
                 },
@@ -253,7 +259,7 @@
             {
                 field: "startDatetime",
                 title: '<@spring.message "attendclassrecord.startdatetime"/>',
-                width: 120,
+                width: 180,
                 format:"{0:yyyy-MM-dd hh:mm:ss}",
                 attributes: {
                     readonly: true
@@ -265,7 +271,7 @@
             {
                 field: "endDatetime",
                 title: '<@spring.message "attendclassrecord.enddatetime"/>',
-                width: 120,
+                width: 180,
                 format:"{0:yyyy-MM-dd hh:mm:ss}",
                 attributes: {
                     readonly: true
@@ -277,18 +283,28 @@
             {
                 field: "score",
                 title: '<@spring.message "attendclassrecord.score"/>',
-                width: 120
-
+                width: 120,
+                editor: function(container, options){
+                    $('<input name="' + options.field + '" type="number"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            decimals: 2,
+                            min:0.00
+                        });
+                },
+                attributes: {
+                    style: "text-align:right"
+                },
             },
             {
                 field: "perforComment",
                 title: '<@spring.message "attendclassrecord.perforcomment"/>',
-                width: 120
+                width: 220
             },
             {
                 field: "timeLong",
                 title: '<@spring.message "attendclassrecord.timeLong"/>',
-                width: 80,
+                width: 130,
                 attributes: {
                     readonly: true
                 },
