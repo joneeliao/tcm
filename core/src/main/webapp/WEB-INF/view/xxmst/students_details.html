@@ -23,6 +23,7 @@
         <div id="grid"></div>
     </div>
 </div>
+<div id="detailsWin" style="display: none"></div>
 <script src="${base.contextPath}/common/code?studentType=XXMST_STUDENT_TYPE" type="text/javascript"></script>
 <script src="${base.contextPath}/common/code?vipLevel=XXMST_VIP_LEVEL" type="text/javascript"></script>
 <script src="${base.contextPath}/common/code?gender=HR.EMPLOYEE_GENDER" type="text/javascript"></script>
@@ -75,6 +76,7 @@
                     address: {validation: {required: true}},
                     mobile: {validation: {required: true}},
                     parentName: {validation: {required: true}},
+                    attendCount:{editable: false}
                 }
             }
         }
@@ -146,12 +148,14 @@
                 },
                 editor: function (container, options) {
                     container.html(options.model.studentNum);
-                }
+                },
+                locked:true
             },
             {
                 field: "studentName",
                 title: '<@spring.message "studentsdetails.studentname"/>',
-                width: 120
+                width: 120,
+                locked:true
             },
             {
                 field: "gender",
@@ -242,6 +246,25 @@
                 width: 150
             },
             {
+                field: "attendCount",
+                title: '<@spring.message "studentsdetails.attendCount"/>',
+                width: 120,
+                template: function (rowdata) {
+
+                    if(rowdata.studentId == null){
+                        return '';
+                    }
+                    var attendCount = rowdata.attendCount;
+                    var studentId = rowdata.studentId;
+
+                    return '<a style="color: #4d7bff; font-weight: bold" ' +
+                        'href="javascript:void(0);" ' +
+                        'onclick="viewDetails('+ rowdata.studentId +')">' +
+                        kendo.htmlEncode(attendCount) + '</a>';
+
+                },
+            },
+            {
                 field: "comments",
                 title: '<@spring.message "studentsdetails.comments"/>',
                 width: 220
@@ -250,6 +273,29 @@
         editable: true
     });
 
+    function viewDetails(studentId){
+        var url = '${base.contextPath}/xxcse/attend_class_record.html';
+        if (studentId && (studentId != '0')) {
+            url = url + '?studentId=' + studentId + '&trxType=readOnly';
+        }else{
+            return;
+        }
+
+        var editWin = Hap.createWindow('#detailsWin',{
+            width: 900,
+            height: 520,
+            title: '<@spring.message "hap.view"/>',
+            url: url
+        })
+
+        if (parent.autoResizeIframe) {
+            parent.autoResizeIframe('${RequestParameters.functionCode!}', 650, function () {
+                editWin.maximize().open();
+            })
+        } else {
+            editWin.maximize().open();
+        }
+    }
 </script>
 </body>
 </html>

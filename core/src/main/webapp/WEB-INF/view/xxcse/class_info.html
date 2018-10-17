@@ -44,7 +44,7 @@
         <div id="grid"></div>
     </div>
 </div>
-
+<div id="detailsWin" style="display: none"></div>
 <script type="text/javascript">
     Hap.initEnterQuery('#query-form', viewModel.query);
     var BaseUrl = _basePath;
@@ -292,6 +292,40 @@
 
             },
             {
+                title: '课程表',
+                width: 120,
+                headerAttributes: {
+                    "class": "table-header-cell ",
+                    style: "text-align: center;color:#00CC00;"
+                },
+                attributes: {style: "text-align:center"},
+                template: function (rowdata) {
+                    var lineId = rowdata.classId;
+                    if (!!lineId) {
+                        return '<a style="color: #240fff"  class="k-grid-attachments" href="javascript:void(0);" onclick="viewSchedule(' + lineId + ')"><i class="fa fa-th-large" style="margin-right: 3px;"></i></a>';
+                    }else{
+                        return ''
+                    }
+                },
+            },
+            {
+                title: '班级学员',
+                width: 120,
+                headerAttributes: {
+                    "class": "table-header-cell ",
+                    style: "text-align: center;color:#00CC00;"
+                },
+                attributes: {style: "text-align:center"},
+                template: function (rowdata) {
+                    var lineId = rowdata.classId;
+                    if (!!lineId) {
+                        return '<a style="color: #240fff"  class="k-grid-attachments" href="javascript:void(0);" onclick="viewMembers(' + lineId + ')"><i class="fa fa-users" style="margin-right: 3px;"></i></a>';
+                    }else{
+                        return ''
+                    }
+                },
+            },
+            {
                 field: "startDate",
                 title: '<@spring.message "classinfo.startdate"/>',
                 width: 120,
@@ -351,6 +385,47 @@
         editable: true
     });
 
+
+    //viewSchedule viewMembers
+
+    function viewSchedule(uniqueId) {
+        var url = '${base.contextPath}/xxcse/class_schedule.html';
+        if (uniqueId && (uniqueId != '0')) {
+            url = url + '?classId=' + uniqueId + '&trxType=readOnly';
+        }else{
+            return;
+        }
+        viewDetails(url);
+    }
+
+    function viewMembers(uniqueId) {
+        var url = '${base.contextPath}/xxcse/class_students.html';
+        if (uniqueId && (uniqueId != '0')) {
+            url = url + '?classId=' + uniqueId + '&trxType=readOnly';
+        }else{
+            return;
+        }
+        viewDetails(url);
+    }
+
+    function viewDetails(urlStr){
+        var url = urlStr;
+
+        var editWin = Hap.createWindow('#detailsWin',{
+            width: 900,
+            height: 520,
+            title: '<@spring.message "hap.view"/>',
+            url: url
+        })
+
+        if (parent.autoResizeIframe) {
+            parent.autoResizeIframe('${RequestParameters.functionCode!}', 650, function () {
+                editWin.maximize().open();
+            })
+        } else {
+            editWin.maximize().open();
+        }
+    }
 </script>
 </body>
 </html>

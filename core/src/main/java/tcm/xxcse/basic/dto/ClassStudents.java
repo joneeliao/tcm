@@ -66,6 +66,8 @@ public class ClassStudents extends BaseDTO {
     private String studentName;
     @Transient
     private String parentName;
+    @Transient
+    private Long attendCount;
 
     private Long programApplicationId;
 
@@ -214,5 +216,13 @@ public class ClassStudents extends BaseDTO {
 
     public void setParentName(String parentName) {
         this.parentName = parentName;
+    }
+
+    public Long getAttendCount() {
+        return attendCount;
+    }
+
+    public void setAttendCount(Long attendCount) {
+        this.attendCount = attendCount;
     }
 }

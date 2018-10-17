@@ -49,6 +49,9 @@
         <if test="classId != null">
             and xci.CLASS_ID = #{classId}
         </if>
+        <if test="scheduleId != null">
+            and xcs.SCHEDULE_ID = #{scheduleId}
+        </if>
         <if test="classNum != null">
             and xci.CLASS_NUM = #{classNum}
         </if>

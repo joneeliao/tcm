@@ -18,7 +18,28 @@
         <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
         <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
         <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+
+        <result column="ATTEND_COUNT" property="attendCount" jdbcType="DECIMAL" />
     </resultMap>
 
-
+    <select id="queryData" resultMap="BaseResultMap" parameterType="tcm.xxmst.basic.dto.StudentsDetails">
+        select xsd.*,
+            (SELECT
+            COUNT(1)
+            FROM
+            xxcse_attend_class_record xacr,
+            xxcse_class_students xcs
+            WHERE
+            xcs.CLASS_STUDENT_ID = xacr.CLASS_STUDENT_ID
+            AND xcs.STUDENT_ID = xsd.STUDENT_ID) ATTEND_COUNT
+        from xxmst_students_details xsd
+        where 1=1
+        <if test="studentName != null">
+            and xsd.STUDENT_NAME like CONCAT('%', #{studentName},'%')
+        </if>
+        <if test="parentName != null">
+            and xsd.PARENT_NAME like CONCAT('%', #{parentName},'%')
+        </if>
+        order by xsd.STUDENT_ID desc
+    </select>
 </mapper>

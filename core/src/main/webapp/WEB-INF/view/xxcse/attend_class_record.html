@@ -1,6 +1,14 @@
 <#include "../include/header.html">
 <script type="text/javascript">
     var viewModel = Hap.createGridViewModel("#grid");
+    var paramStudentId = "${RequestParameters.studentId!''}";
+    var paramTrxType = "${RequestParameters.trxType!''}";
+    var paramScheduleId = "${RequestParameters.scheduleId!''}";
+    var paramClassStudentId = "${RequestParameters.classStudentId!''}";
+    var editable = true;
+    if(paramTrxType){
+        editable = true;
+    }
 </script>
     <script src="${base.contextPath}/common/code?courseCode=XXMST_COURSE" type="text/javascript"></script>
 <body>
@@ -69,7 +77,11 @@
                     var datas = Hap.prepareSubmitParameter(options, type)
                     return kendo.stringify(datas);
                 } else if (type === "read") {
-                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    var p = Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    if(paramStudentId) p.studentId = paramStudentId;
+                    if(paramScheduleId) p.scheduleId = paramScheduleId;
+                    if(paramClassStudentId) p.classStudentId = paramClassStudentId;
+                    return p;
                 }
             }
         },
@@ -134,6 +146,11 @@
                 hidden: true
             },
             {
+                field: "classIdStudent",
+                width: 120,
+                hidden: true
+            },
+            {
                 field: "scheduleId",
                 title: '<@spring.message "attendclassrecord.scheduleid"/>',
                 width: 120,
@@ -179,6 +196,15 @@
                                 options.model.set('comments', '');
                             }
                         },
+                        query: function (e) {
+                            if(paramScheduleId){
+                                e.param["scheduleId"] = paramScheduleId;
+                            }
+                            var classIdStudent = options.model.get('classIdStudent');
+                            if(classIdStudent){
+                                e.param["classId"] = classIdStudent;
+                            }
+                        }
                     }
                     ));
                 },
@@ -199,14 +225,26 @@
                         model: options.model,
                         select: function (e) {
                             options.model.set('classStudentId', e.item.classStudentId);
+                            options.model.set('classIdStudent', e.item.classId);
                         },
                         change: function (e) {
                             if (options.model.get('studentName') == null) {
                                 options.model.set('classStudentId', '');
+                                options.model.set('classIdStudent', '');
                             }
                         },
                         query: function (e) {
-                            e.param["classId"] = options.model.get('classId');
+                            var classId = options.model.get('classId');
+
+                            if(classId){
+                                e.param["classId"] = classId;
+                            }
+                            if (paramStudentId){
+                                e.param["studentId"] = paramStudentId;
+                            }
+                            if(paramClassStudentId){
+                                e.param["classStudentId"] = paramClassStudentId;
+                            }
                         }
                     }
                     ));
@@ -335,7 +373,7 @@
                 }
             },
         ],
-        editable: true
+        editable: editable
     });
 
 </script>

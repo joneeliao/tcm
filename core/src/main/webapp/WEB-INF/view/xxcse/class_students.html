@@ -1,6 +1,7 @@
 <#include "../include/header.html">
 <script type="text/javascript">
     var viewModel = Hap.createGridViewModel("#grid");
+    var paramClassId = "${RequestParameters.classId!''}";
 </script>
     <script src="${base.contextPath}/common/code?classType=XXCSE_CLASS_TYPE" type="text/javascript"></script>
     <script src="${base.contextPath}/common/code?courseCode=XXMST_COURSE" type="text/javascript"></script>
@@ -46,7 +47,7 @@
         <div id="grid"></div>
     </div>
 </div>
-
+<div id="detailsWin" style="display: none"></div>
 <script type="text/javascript">
     Hap.initEnterQuery('#query-form', viewModel.query);
     var BaseUrl = _basePath;
@@ -77,7 +78,11 @@
                     var datas = Hap.prepareSubmitParameter(options, type)
                     return kendo.stringify(datas);
                 } else if (type === "read") {
-                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    var p = Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                    if(paramClassId){
+                        p.classId = paramClassId;
+                    }
+                    return p;
                 }
             }
         },
@@ -166,6 +171,11 @@
                                 options.model.set('courseCode', '');
                             }
                         },
+                        query: function (e) {
+                            if(paramClassId){
+                                e.param["classId"] = paramClassId;
+                            }
+                        }
                     }
                     ));
                 },
@@ -320,6 +330,25 @@
 
             },
             {
+                field: "attendCount",
+                title: '<@spring.message "studentsdetails.attendCount"/>',
+                width: 120,
+                template: function (rowdata) {
+
+                    if(rowdata.studentId == null){
+                        return '';
+                    }
+                    var attendCount = rowdata.attendCount;
+                    var classStudentId = rowdata.classStudentId;
+
+                    return '<a style="color: #4d7bff; font-weight: bold" ' +
+                        'href="javascript:void(0);" ' +
+                        'onclick="viewDetails('+ classStudentId +')">' +
+                        kendo.htmlEncode(attendCount) + '</a>';
+
+                },
+            },
+            {
                 field: "startDate",
                 title: '<@spring.message "classinfo.startdate"/>',
                 width: 120,
@@ -378,6 +407,29 @@
         editable: true
     });
 
+    function viewDetails(studentId){
+        var url = '${base.contextPath}/xxcse/attend_class_record.html';
+        if (studentId && (studentId != '0')) {
+            url = url + '?classStudentId=' + studentId + '&trxType=readOnly';
+        }else{
+            return;
+        }
+
+        var editWin = Hap.createWindow('#detailsWin',{
+            width: 900,
+            height: 520,
+            title: '<@spring.message "hap.view"/>',
+            url: url
+        })
+
+        if (parent.autoResizeIframe) {
+            parent.autoResizeIframe('${RequestParameters.functionCode!}', 650, function () {
+                editWin.maximize().open();
+            })
+        } else {
+            editWin.maximize().open();
+        }
+    }
 </script>
 </body>
 </html>

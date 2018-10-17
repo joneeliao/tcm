@@ -12,6 +12,7 @@ import com.hand.hap.mybatis.annotation.ExtensionAttribute;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.hand.hap.system.dto.BaseDTO;
 
@@ -89,6 +90,8 @@ public class StudentsDetails extends BaseDTO {
     private Long programApplicationId;
 
     private Date programUpdateDate;
+    @Transient
+    private Long attendCount;
 
 
     public void setStudentId(Long studentId) {
@@ -209,5 +212,13 @@ public class StudentsDetails extends BaseDTO {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public Long getAttendCount() {
+        return attendCount;
+    }
+
+    public void setAttendCount(Long attendCount) {
+        this.attendCount = attendCount;
     }
 }

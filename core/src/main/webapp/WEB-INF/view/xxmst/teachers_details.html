@@ -119,6 +119,7 @@
                 width: 120,
                 template: function (dataItem) {
                     var v = dataItem.techType;
+                    if(v=='' || v == undefined ) return "";
                     $.each(techType, function (i, n) {
                         if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
                             v = n.meaning;
@@ -186,12 +187,14 @@
                 },
                 editor: function (container, options) {
                     container.html(options.model.teacherNum);
-                }
+                },
+                locked:true
             },
             {
                 field: "teacherName",
                 title: '<@spring.message "teachersdetails.teachername"/>',
-                width: 120
+                width: 120,
+                locked:true
             },
             {
                 field: "bornDate",

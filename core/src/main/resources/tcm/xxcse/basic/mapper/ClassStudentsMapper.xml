@@ -21,6 +21,7 @@
         <result column="STUDENT_NUM" property="studentNum" jdbcType="VARCHAR" />
         <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR" />
         <result column="PARENT_NAME" property="parentName" jdbcType="VARCHAR" />
+        <result column="ATTEND_COUNT" property="attendCount" jdbcType="DECIMAL" />
     </resultMap>
 
     <select id="queryData" resultMap="BaseResultMap" parameterType="tcm.xxcse.basic.dto.ClassStudents">
@@ -35,7 +36,13 @@
             xtd.TEACHER_NUM,
             xsd.STUDENT_NUM,
             xsd.STUDENT_NAME,
-            xsd.PARENT_NAME
+            xsd.PARENT_NAME,
+            (SELECT
+            COUNT(1)
+            FROM
+            xxcse_attend_class_record xacr
+            WHERE
+            xacr.CLASS_STUDENT_ID = xcs.CLASS_STUDENT_ID) ATTEND_COUNT
         FROM
             xxcse_class_info xci,
             xxmst_teachers_details xtd,
@@ -60,9 +67,16 @@
         <if test="classId != null">
             and xci.CLASS_ID = #{classId}
         </if>
+        <if test="studentId != null">
+            and xcs.STUDENT_ID = #{studentId}
+        </if>
         <if test="classNum != null">
             and xci.CLASS_NUM = #{classNum}
         </if>
+        <if test="classStudentId != null">
+            and xcs.CLASS_STUDENT_ID = #{classStudentId}
+        </if>
+
         order by xci.CLASS_NUM desc, xsd.STUDENT_NUM desc
     </select>
 </mapper>

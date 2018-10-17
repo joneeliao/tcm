@@ -34,7 +34,7 @@ public class StudentsDetailsController extends BaseController {
     public ResponseData query(StudentsDetails dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(service.select(requestContext, dto, page, pageSize));
+        return new ResponseData(service.queryData(requestContext, dto, page, pageSize));
     }
 
     @RequestMapping(value = "/xxmst/students/details/submit")
