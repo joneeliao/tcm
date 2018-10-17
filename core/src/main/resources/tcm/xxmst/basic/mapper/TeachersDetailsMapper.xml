@@ -25,6 +25,7 @@
         <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
         <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
         <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+        <result column="UNIT_PRICE" property="unitPrice" jdbcType="DECIMAL" />
     </resultMap>
 
 

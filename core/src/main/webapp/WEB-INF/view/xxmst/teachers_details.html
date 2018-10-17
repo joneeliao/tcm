@@ -219,6 +219,22 @@
                 format: "{0: yyyy-MM-dd}",
             },
             {
+                field: "unitPrice",
+                title: '<@spring.message "teachersdetails.unitPrice"/>',
+                width: 120,
+                editor: function(container, options){
+                    $('<input name="' + options.field + '" REQUIRED type="number"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            decimals: 0,
+                            min:0
+                        });
+                },
+                attributes: {
+                    style: "text-align:right"
+                },
+            },
+            {
                 field: "gender",
                 title: '<@spring.message "teachersdetails.gender"/>',
                 width: 120,

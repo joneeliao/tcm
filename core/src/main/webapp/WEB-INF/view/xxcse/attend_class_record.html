@@ -28,11 +28,29 @@
                data-bind="value:model.studentName" class="k-textbox">
         <input type="text" id="courseCode" style="width:150px;" placeholder='<@spring.message "ClassInfo.courseCode"/>'
                data-bind="value:model.courseCode">
+        <input id="searchDateFrom" style="width:150px;" placeholder='<@spring.message "ClassInfo.searchDateFrom"/>'
+               data-bind="value:model.searchDateFrom" >
+        <input id="searchDateTo" style="width:150px;" placeholder='<@spring.message "ClassInfo.searchDateTo"/>'
+               data-bind="value:model.searchDateTo" >
         <span class="btn btn-primary" style="width:70px" data-bind="click:query" type="submit"><@spring.message "hap.query"/></span>
         <div style="clear:both"></div>
     </div>
     <script>kendo.bind($('#query-form'), viewModel);</script>
     <script type="text/javascript">
+
+        $("#searchDateFrom").kendoDatePicker({
+            format: "yyyy-MM-dd",
+            /*
+            change: function () {
+                var startTime = $("#activityDateFm").val();
+                var endFinal = $("#activityDateTo").data("kendoDateTimePicker");
+                endFinal.min(startTime);
+            }
+            */
+        });
+        $("#searchDateTo").kendoDatePicker({
+            format: "yyyy-MM-dd",
+        });
 
         $("#courseCode").kendoComboBox({
             dataSource:courseCode,

@@ -75,7 +75,10 @@ public class AttendClassRecord extends BaseDTO {
     private Long studentId;
     @Transient
     private Long classId;
-
+    @Transient
+    private Date searchDateFrom;
+    @Transient
+    private Date searchDateTo;
 
     public void setAttendId(Long attendId) {
         this.attendId = attendId;
@@ -235,5 +238,21 @@ public class AttendClassRecord extends BaseDTO {
 
     public void setClassId(Long classId) {
         this.classId = classId;
+    }
+
+    public Date getSearchDateFrom() {
+        return searchDateFrom;
+    }
+
+    public void setSearchDateFrom(Date searchDateFrom) {
+        this.searchDateFrom = searchDateFrom;
+    }
+
+    public Date getSearchDateTo() {
+        return searchDateTo;
+    }
+
+    public void setSearchDateTo(Date searchDateTo) {
+        this.searchDateTo = searchDateTo;
     }
 }

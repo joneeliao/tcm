@@ -82,6 +82,16 @@
         <if test="teacherId != null">
             and xtd.TEACHER_ID = #{teacherId}
         </if>
+        <if test="searchDateFrom != null">
+            <![CDATA[
+            and DATE_FORMAT(acr.START_DATETIME,'%Y-%m-%d') >= date(#{searchDateFrom,jdbcType=DATE})
+            ]]>
+        </if>
+        <if test="searchDateTo != null">
+            <![CDATA[
+            and DATE_FORMAT(acr.START_DATETIME,'%Y-%m-%d') <= date(#{searchDateTo,jdbcType=DATE})
+            ]]>
+        </if>
         order by xcs.SCHEDULE_ID desc
     </select>
 </mapper>

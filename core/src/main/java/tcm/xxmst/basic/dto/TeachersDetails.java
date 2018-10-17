@@ -115,6 +115,8 @@ public class TeachersDetails extends BaseDTO {
 
     private Date programUpdateDate;
 
+    private Long unitPrice;//UNIT_PRICE
+
 
     public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
@@ -292,4 +294,11 @@ public class TeachersDetails extends BaseDTO {
         return programUpdateDate;
     }
 
+    public Long getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Long unitPrice) {
+        this.unitPrice = unitPrice;
+    }
 }
