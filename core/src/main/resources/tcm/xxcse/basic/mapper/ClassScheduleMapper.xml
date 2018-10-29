@@ -19,6 +19,7 @@
         <result column="CLASS_NUM" property="classNum" jdbcType="VARCHAR" />
         <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
         <result column="COURSE_CODE" property="courseCode" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
     </resultMap>
 
     <select id="queryData" resultMap="BaseResultMap" parameterType="tcm.xxcse.basic.dto.ClassSchedule">

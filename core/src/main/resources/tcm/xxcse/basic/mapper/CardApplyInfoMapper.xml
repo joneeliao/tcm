@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="tcm.xxcse.basic.mapper.CardApplyInfoMapper">
+    <resultMap id="BaseResultMap" type="tcm.xxcse.basic.dto.CardApplyInfo">
+        <result column="APPLY_ID" property="applyId" jdbcType="DECIMAL" />
+        <result column="SCHOOL_ID" property="schoolId" jdbcType="DECIMAL" />
+        <result column="STUDENT_ID" property="studentId" jdbcType="DECIMAL" />
+        <result column="CARD_TYPE_CODE" property="cardTypeCode" jdbcType="VARCHAR" />
+        <result column="OLD_CUSTOMER" property="oldCustomer" jdbcType="VARCHAR" />
+        <result column="START_DATE" property="startDate" jdbcType="DATE" />
+        <result column="END_DATE" property="endDate" jdbcType="DATE" />
+        <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+        <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+        <result column="STUDENT_NAME" property="studentName" jdbcType="VARCHAR" />
+        <result column="STUDENT_NUM" property="studentNum" jdbcType="VARCHAR" />
+        <result column="BIRTHDAY" property="birthday" jdbcType="DATE" />
+        <result column="SCHOOL_NAME" property="schoolName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="queryData" resultMap="BaseResultMap" parameterType="tcm.xxcse.basic.dto.CardApplyInfo">
+        SELECT
+            xca.*,
+            xsd.SCHOOL_NAME SCHOOL_NAME,
+            xsd.SCHOOL_NUMBER,
+            stu.STUDENT_NAME STUDENT_NAME,
+            stu.STUDENT_NUM STUDENT_NUM,
+            stu.BORN_DATE BIRTHDAY
+        FROM
+            XXCSE_CARD_APPLY_INFO xca,
+            xxmst_school_details xsd,
+            xxmst_students_details stu
+        WHERE
+            xsd.SCHOOL_ID = xca.SCHOOL_ID
+        AND stu.STUDENT_ID = xca.STUDENT_ID
+        <if test="cardTypeCode != null">
+            and xca.CARD_TYPE_CODE = #{cardTypeCode}
+        </if>
+        <if test="comments != null">
+            and xca.COMMENTS like CONCAT('%', #{comments},'%')
+        </if>
+        <if test="studentName != null">
+            and stu.STUDENT_NAME like CONCAT('%',  #{studentName},'%')
+        </if>
+        <if test="schoolName != null">
+            and xsd.SCHOOL_NAME like CONCAT('%',   #{schoolName},'%')
+        </if>
+        order by xca.APPLY_ID desc
+    </select>
+</mapper>

@@ -5,6 +5,7 @@
 </script>
     <script src="${base.contextPath}/common/code?classType=XXCSE_CLASS_TYPE" type="text/javascript"></script>
     <script src="${base.contextPath}/common/code?courseCode=XXMST_COURSE" type="text/javascript"></script>
+    <script src="${base.contextPath}/common/code?schedualStatus=XXCSE_SCHEDUAL_STATUS" type="text/javascript"></script>
 <body>
 <div id="page-content">
     <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
@@ -99,6 +100,7 @@
                     endDatetime: {type: "date",validation: {required: true},defaultValue: ""},
                     classNum: {validation: {required: true}},
                     timeLong: {type: "number",validation: {required: true},defaultValue: ""},
+                    status: {validation: {required: true},defaultValue: "NEW"},
                 }
             }
         }
@@ -258,7 +260,7 @@
             {
                 field: "timeLong",
                 title: '<@spring.message "classschedule.timelong"/>',
-                width: 120,
+                width: 150,
                 editor: function(container, options){
                     $('<input name="' + options.field + '" REQUIRED type="number"/>')
                         .appendTo(container)
@@ -275,6 +277,34 @@
                 field: "classroom",
                 title: '<@spring.message "classschedule.classroom"/>',
                 width: 120
+            },
+            {
+                field: "status",
+                title: '<@spring.message "classschedule.status"/>',
+                width: 120,
+                template: function (dataItem) {
+                    var v = dataItem.status;
+                    if(v == "" || v == 	undefined){
+                        return "";
+                    }
+                    $.each(schedualStatus, function (i, n) {
+                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
+                            v = n.meaning;
+                            return v;
+                        }
+                    })
+                    return v;
+                },
+                editor: function (container, options) {
+                    $('<input name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoComboBox({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: schedualStatus,
+                            valuePrimitive: true,
+                        });
+                }
             },
             {
                 field: "teacherName",
@@ -363,7 +393,27 @@
             },
 
         ],
-        editable: true
+        editable: true,
+        dataBound: function(e) {
+            //第一点：获取当前Grid的数据源行数
+            var  grid = $("#grid").data("kendoGrid")
+            var data = grid.dataSource.data();
+            var totalNumber = data.length;
+            for(var i = 0; i < totalNumber; i++) {
+                //获取当前第几行
+                var tr="tr:eq("+i+")"
+                //第二点：获取当前Grid行的数据
+                var row = grid.tbody.find(tr);
+                var dataFront = grid.dataItem(row);
+                if(dataFront.status === 'NEW'){
+                    $(row).css("background-color", "#FFDEAD");
+                }else if(dataFront.status === 'CANCELLED'){
+                    $(row).css("background-color", "#CFCFCF")
+                }else{
+                    $(row).css("background-color", "#BCEE68");
+                }
+            }
+        },
     });
 
     function viewDetails(uniqueId){
